@@ -1,216 +1,145 @@
-import React, { useEffect, useState } from "react";
-
-import { useTranslation } from "react-i18next";
-import img1 from "/public/unsplash_3JmfENcL24M.png"
-import html from "/public/Group 12.svg"
-import css from '/public/css.png'
-import js from '/public/js.png'
-import react from '/public/react.png'
-import git from '/public/git.png'
-import github from '/public/github.png'
-import next from '/public/next.jfif'
-import css1 from '/public/css.png'
-import team1 from "/public/Frame 12302.png"
-import projectsMy from "/public/Group 47467.png"
-import { Button } from "@/components/ui/button";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
-
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css";
+import React, { useReducer, useState } from 'react'
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectLabel
-} from "@/components/ui/select"
-const Layout = () => {
-  const { t, i18n } = useTranslation()
-  const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem("theme") === "dark"
-  })
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
-  useEffect(() => {
-    localStorage.setItem("theme", darkMode ? "dark" : "light")
-  }, [darkMode])
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose
+} from "@/components/ui/dialog"
+const initialState = {
+
+  count: 0,
+  value: 0,
+  setName: "",
+
+  data: [
+    {
+      id: 1,
+      name: "Ahmad",
+      desk: "Faridunov"
+    },
+    {
+      id: 2,
+      name: "Vahob",
+      desk: "Shamsudiniov"
+    },
+    {
+      id: 3,
+      name: "Amrullo",
+      desk: "Mavlonzoda"
+    },
+  ]
+}
+
+const countReducer = (state, action) => {
+  if (action.type == "increment") {
+    return { ...state, count: state.count + 1 }
+  }
+  if (action.type == "delete") {
+    return { ...state, data: state.data.filter((e) => e.id != action.value) }
+  }
+  if (action.type == "add") {
+    return { ...state, data: [...state.data, action.value] }
+  }
+  if (action.type == "edit") {
+    return { ...state, data: state.data.map((el) => el.id == action.value.id ? action.value : el) }
+  }
+}
+
+const Layout = () => {
+  const [state, dispatch] = useReducer(countReducer, initialState)
+  const [editUser, setEditUser] = useState({})
+  const [search,setSearch]=useState("")
+  function handleSubmitAdd(e) {
+    e.preventDefault();
+    let newUser = {
+      id: Date.now(),
+      name: e.target.name.value,
+      desk: e.target.desk.value,
+    }
+    dispatch({ type: "add", value: newUser })
+    e.target.reset()
+  }
 
   return (
     <>
-      <div className={darkMode ? "dark" : ""}>
-        <div className="dark:bg-black dark:text-white">
 
-          <header className="flex  justify-between items-center px-15 py-4">
-            <h1>FullStack Developer</h1>
-            <div className="flex gap-5 cursor-pointer">
-              <h1>{t("home")}</h1>
-              <h1>{t("service")}</h1>
-              <h1>{t("projects")}</h1>
-              <h1>{t("about")}</h1>
-              <h1>{t("client")}</h1>
-              <h1>{t("contact")}</h1>
-            </div>
-            <div className="flex gap-5">
-              <Button onClick={() => setDarkMode(!darkMode)}>{darkMode ? "LightMode" : "DarkMode"}</Button>
-              <Select
-                value={i18n.language}
-                onValueChange={(lang) => {
-                  i18n.changeLanguage(lang);
-                  localStorage.setItem("lang", lang);
-                }}
-              >
-                <SelectTrigger className="w-full max-w-28">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Language</SelectLabel>
-                    <SelectItem className="uppercase" value="ru">RU</SelectItem>
-                    <SelectItem value="en">EN</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          </header>
-
-
-          <div className="flex justify-between mt-4 items-center px-15">
-            <div className="flex flex-col gap-4">
-              <h1 className="text-4xl w-[400px]">{t("name")}</h1>
-              <p className="w-[400px]">{t("aboutMe")}</p>
-              <Button variant="outline" className="hover:bg-[#555dce]">View Projects</Button>
-            </div>
-            <div><img src={img1} alt="" /></div>
-          </div>
-
-          <div className="py-15 ">
-            <h1 className="text-4xl text-center mb-5">{t("skills")}</h1>
-            <Swiper
-              modules={[Autoplay, Navigation, Pagination]}
-              loop={true}
-              slidesPerView={5}
-              spaceBetween={20}
-              autoplay={{
-                delay: 1000,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true,
-              }}
-              className="h-[200px]"
-            >
-              <SwiperSlide className=" text-2xl">
-                <div className="flex  flex-col items-center justify-center gap-2">
-                  <div> <img className="w-[100px]" src={html} alt="" /></div>
-                  <h1>HTML</h1>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide className=" text-2xl">
-                <div className="flex  flex-col items-center justify-center gap-2">
-                  <div> <img className="w-[100px]" src={css1} alt="" /></div>
-                  <h1>CSS</h1>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide className=" text-2xl">
-                <div className="flex  flex-col items-center justify-center gap-2">
-                  <div> <img className="w-[100px]" src={js} alt="" /></div>
-                  <h1>JavaScript</h1>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide className=" text-2xl">
-                <div className="flex  flex-col items-center justify-center gap-2">
-                  <div> <img className="w-[100px]" src={react} alt="" /></div>
-                  <h1>REACT</h1>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide className=" text-2xl">
-                <div className="flex  flex-col items-center justify-center gap-2 ">
-                  <div> <img className="w-[100px] rounded-[70%]" src={git} alt="" /></div>
-                  <h1>Git</h1>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide className=" text-2xl">
-                <div className="flex  flex-col items-center justify-center gap-2">
-                  <div> <img className="w-[100px] rounded-full" src={github} alt="" /></div>
-                  <h1>GitHub</h1>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide className=" text-2xl">
-                <div className="flex  flex-col items-center justify-center gap-2">
-                  <div> <img className="w-[100px] rounded-full" src={next} alt="" /></div>
-                  <h1>NextJS</h1>
-                </div>
-              </SwiperSlide>
-            </Swiper>
-
-          </div>
-
-
-          <div className="flex flex-col items-center text-center">
-            <h1 className="text-4xl text-center">{t("teams")}</h1>
-            <div className="flex gap-30">
-              <div>
-                <div className="flex flex-col gap-2">
-                  <div><img src={team1} alt="" /></div>
-                  <h1>UI & UX Design</h1>
-                  <p className="w-[260px]">{t("teamAbout")}</p>
-                </div>
-              </div>
-              <div>
-                <div className="flex flex-col gap-2">
-                  <div><img src={team1} alt="" /></div>
-                  <h1>UI & UX Design</h1>
-                  <p className="w-[260px]">{t("teamAbout")}</p>
-                </div>
-              </div>
-              <div>
-                <div className="flex flex-col gap-2">
-                  <div><img src={team1} alt="" /></div>
-                  <h1>UI & UX Design</h1>
-                  <p className="w-[260px]">{t("teamAbout")}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-          <div className="my-20 text-center">
-            <h1 className="mb-5 text-4xl">My completed projects</h1>
-            <div><img src={projectsMy} alt="" /></div>
-          </div>
-
-          <footer className="px-30 flex justify-between">
-
-
-            <nav className="flex flex-col gap-2">
-              <h6 className="footer-title">{t("services")}</h6>
-              <p>{t("branding")}</p>
-              <p>{t("design")}</p>
-              <p>{t("marketing")}</p>
-              <p>{t("advertisement")}</p>
-            </nav>
-
-            <nav className="flex flex-col gap-2">
-              <h6 className="footer-title">{t("company")}</h6>
-              <p>{t("aboutUs")}</p>
-              <p>{t("contact")}</p>
-              <p>{t("jobs")}</p>
-              <p>{t("pressKit")}</p>
-            </nav>
-
-            <nav className="flex flex-col gap-2">
-              <h6 className="footer-title">{t("legal")}</h6>
-              <p>{t("terms")}</p>
-              <p>{t("privacy")}</p>
-              <p>{t("cookie")}</p>
-            </nav>
-          </footer>
+      <div>
+        <div className='flex items-center gap-4'>
+          <Dialog>
+            <DialogTrigger className="p-2"><Button className="bg-blue-700 p-4">Add Users</Button></DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <form className='flex flex-col gap-4' action="" onSubmit={handleSubmitAdd}>
+                  <Input type="text" name='name' placeholder='name' />
+                  <Input type="text" name='desk' placeholder='desk' />
+                  <DialogClose><Button variant='outline' className="w-full" type='submit'>Add</Button></DialogClose>
+                </form>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+          <Input className="border-2 w-[200px]" placeholder="Search..." value={search} onChange={(e)=> setSearch(e.target.value)} />
         </div>
+        <Table>
+          <TableCaption>A list of your recent invoices.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[400px] px-10">Name</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {
+              state.data.filter((el)=> el.name.toLowerCase().trim().includes(search.toLowerCase().trim())).map((el) => {
+                return <TableRow className="border-2 p-10" key={el.id} >
+                  <TableCell className="w-[400px] px-10" >{el.name}</TableCell>
+                  <TableCell>{el.desk}</TableCell>
+                  <Button type='submit' className="bg-red-800" onClick={() => dispatch({ type: "delete", value: el.id })}>Delete</Button>
+                  <Dialog>
+                    <DialogTrigger><Button onClick={() => setEditUser(el)} className="bg-green-700">EditUser</Button></DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Are you absolutely sure?</DialogTitle>
+                        <form className='flex flex-col gap-4' action="" onSubmit={(e) => {
+                          e.preventDefault();
+                          dispatch({ type: "edit", value: editUser })
+                        }}>
+                          <Input value={editUser.name} onChange={(e) => setEditUser({ ...editUser, name: e.target.value })} type="text" name='name' placeholder='name' />
+                          <Input value={editUser.desk} onChange={(e) => setEditUser({ ...editUser, desk: e.target.value })} type="text" name='desk' placeholder='desk' />
+                          <DialogClose><Button variant='outline' className="w-full" type='submit'>EDIT</Button></DialogClose>
+                        </form>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableRow>
+              })
+            }
+          </TableBody>
+        </Table>
+
+        <div className='flex gap-4'>
+
+        </div>
+
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Layout;
+export default Layout
